@@ -20,7 +20,7 @@ from langchain.indexes import VectorstoreIndexCreator
 
 # Setting OpenAI API key
 os.environ["OPENAI_API_KEY"] = constants.APIKEY2
-
+openai.api_key = constants.APIKEY2
 db = SQLDatabase.from_uri("mysql+pymysql://root:mysql@localhost:3306/mydataset")
 
 while True:
@@ -63,32 +63,50 @@ while True:
             cache.write(op)
 
     if runmode==3:
-        loader=TextLoader("cache.txt")
-        index=VectorstoreIndexCreator().from_loaders([loader])
-        query=input("Enter your query: ")
-        op=index.query(query,llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-1106"))
-        print(op)
-        '''
-        agent_executor = create_sql_agent(
-        llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-1106"),
-        toolkit=SQLDatabaseToolkit(db=db, llm=OpenAI(temperature=0)),
-        verbose=False,
-        agent_type=AgentType.OPENAI_FUNCTIONS
-        )
-        with open("cache.txt","r") as cache:
-            prev=cache.read()
-        context=f"""\n<<<CONTEXT>>>
-    You will be asked a question related to output you have previously generated, and asked to draw some inference from that. This was the previous output based on which you have to answer: \
-    {prev}\nONLY if necessary to answer the question will you actually access the database. 
-    Table 'test' contains personal details of engineering students. "ID" is the column to look at in case asked about "database ID" or "ID". SRN stands for Student Registration Number. The two capital \
-    letters in the SRN besides "PES" denotes the branch of study (CS=Computer Science, AM=AI and ML, EC=Electronics and Communication Engineering, EE=Electronics and Electrical Engineering, \
-    BT=Biotechnology, ME=Mechanical Engineering) PRN stands for Permanent Registration Number. This table contains information of only \
-    students who joined in 2023. DOB stands for date of birth. Make sure to do any computation related to the question step by step only, and display the steps you have taken to arrive at \
-    your answer."""
-        query=input("Enter your query: ")
-        op=agent_executor.run(query+context)
-        print(op)    
-        '''
+        query=input("Enter your follow up query: ")
+        with open("cache.txt") as cache:
+            fcon=cache.read()
+        messages = [{"role": "user", "content": query +"\nYou will be asked a question related to output you have previously generated, and asked to draw some \
+inference from that. If you are not able to answer the given question with the information available under 'PREVIOUS OUTPUT', then return 'idk' as your only response.\
+This was the previous output based on which you have to answer:\n<<<PREVIOUS OUTPUT>>>\n"+fcon}]
+        reply = openai.ChatCompletion.create(model="gpt-3.5-turbo-1106",messages = messages,temperature=0)
+        answer=reply.choices[0].message["content"]
+        print(answer)
+        
+
+
+
+
+
+
+
+'''
+loader=TextLoader("cache.txt")
+index=VectorstoreIndexCreator().from_loaders([loader])
+query=input("Enter your query: ")
+op=index.query(query,llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-1106"))
+print(op)
+
+agent_executor = create_sql_agent(
+llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-1106"),
+toolkit=SQLDatabaseToolkit(db=db, llm=OpenAI(temperature=0)),
+verbose=False,
+agent_type=AgentType.OPENAI_FUNCTIONS
+)
+with open("cache.txt","r") as cache:
+    prev=cache.read()
+context=f"""\n<<<CONTEXT>>>
+You will be asked a question related to output you have previously generated, and asked to draw some inference from that. This was the previous output based on which you have to answer: \
+{prev}\nONLY if necessary to answer the question will you actually access the database. 
+Table 'test' contains personal details of engineering students. "ID" is the column to look at in case asked about "database ID" or "ID". SRN stands for Student Registration Number. The two capital \
+letters in the SRN besides "PES" denotes the branch of study (CS=Computer Science, AM=AI and ML, EC=Electronics and Communication Engineering, EE=Electronics and Electrical Engineering, \
+BT=Biotechnology, ME=Mechanical Engineering) PRN stands for Permanent Registration Number. This table contains information of only \
+students who joined in 2023. DOB stands for date of birth. Make sure to do any computation related to the question step by step only, and display the steps you have taken to arrive at \
+your answer."""
+query=input("Enter your query: ")
+op=agent_executor.run(query+context)
+print(op)    
+'''
     
 '''    
     agent_executor = create_sql_agent(
