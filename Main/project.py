@@ -14,6 +14,7 @@ from langchain.sql_database import SQLDatabase
 from langchain.utilities import SQLDatabase
 from langchain.document_loaders import TextLoader, DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
+import mysql.connector as ms
 #from langchain.chat_models import ChatHuggingFace  # Use ChatHuggingFace instead of ChatOpenAI
 #from langchain.llms.huggingface import HuggingFace  # Import HuggingFace llm
 #from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -40,7 +41,16 @@ while True:
         n = "I want " + input("Enter number of records to be retrieved: ") + " records"
         sql_query = chain.invoke({"question": query+n,"context":context})
         print(sql_query) #finish with python
+        mycon=ms.connect(user="root",passwd="aditya1824",host="localhost",database="studentrecords")
+        cur=mycon.cursor()
+        cur.execute(sql_query)
+        output=cur.fetchall()
+        cur.close()
+        mycon.close()
+        print(output)
 
+
+    
     if runmode==2:
         agent_executor = create_sql_agent(
         llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-1106"),
