@@ -1,0 +1,73 @@
+import streamlit as st
+
+# Streamlit app layout with improved styling
+def main():
+    # Set page configuration
+    st.set_page_config(
+        page_title="Easy Data Retrieval and Inferencing Using Python and LangChain",
+        page_icon=":speech_balloon:",
+        layout="wide",
+    )
+
+    # Set a more vivid purple theme
+    vivid_purple = "#7E3AC1"
+    st.markdown(
+        f"""
+        <style>
+            body {{
+                background-color: {vivid_purple};
+                color: #ffffff;
+            }}
+            .css-1aumxhk {{
+                width: 85%;
+                max-width: 85%;
+            }}
+            .sidebar .sidebar-content {{
+                background-color: {vivid_purple};
+            }}
+            .css-1s0lmgv {{
+                color: #c9c4d1;
+            }}
+            .css-17eq0hr {{
+                color: #ffffff;
+            }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Main content for chat-like UI
+    st.title("Easy Data Retrieval and Inferencing Using Python and LangChain")
+
+    # Display user input and LLM-generated response in a chat-like format
+    with st.form(key='chat_form'):
+        col1, col2, col3 = st.columns([4, 1, 1])
+        with col1:
+            user_input = st.text_area("Enter a query:", height=100)
+        with col2:
+            selected_option = st.radio("Select an Option", ["Data Retrieval", "Data Inference", "Follow Up"])
+        with col3:
+            # Display additional input based on the selected option
+            if selected_option == "Data Retrieval":
+                resno = st.text_input("Enter the number of records to retrieve if applicable:", key="resno")
+
+        # Button to trigger the action
+        submit_button = st.form_submit_button('Send')
+
+        # If the input field is not empty
+        if submit_button:
+            if user_input:
+                st.text("")
+                st.markdown("You:")
+                st.markdown(user_input)
+                
+                # Display the selected option
+                st.markdown(f"Selected Option: {selected_option}")
+
+                if selected_option == "Data Retrieval" and resno:
+                    st.markdown(f"Records to retrieve: {resno}")
+
+                st.markdown("AI: (LangChain and AI functionality not executed in GUI-only mode)")
+
+if __name__ == "__main__":
+    main()
