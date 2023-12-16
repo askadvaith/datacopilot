@@ -41,7 +41,7 @@ while True:
         n = "I want " + input("Enter number of records to be retrieved: ") + " records"
         sql_query = chain.invoke({"question": query+n,"context":context})
         print(sql_query) #finish with python
-        mycon=ms.connect(user="root",passwd="aditya1824",host="localhost",database="studentrecords")
+        mycon=ms.connect(user="root",passwd="mysql",host="localhost",database="studentrecords")
         cur=mycon.cursor()
         cur.execute(sql_query)
         output=cur.fetchall()
