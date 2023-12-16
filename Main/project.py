@@ -41,6 +41,7 @@ while True:
         n = "I want " + input("Enter number of records to be retrieved: ") + " records"
         sql_query = chain.invoke({"question": query+n,"context":context})
         print(sql_query) #finish with python
+        main
         mycon=ms.connect(user="root",passwd="mysql",host="localhost",database="studentrecords")
         cur=mycon.cursor()
         cur.execute(sql_query)
@@ -49,6 +50,8 @@ while True:
         mycon.close()
         print(output)
 
+
+    
     if runmode==2:
         agent_executor = create_sql_agent(
         llm=ChatOpenAI(temperature=0,model="gpt-3.5-turbo-1106"),
