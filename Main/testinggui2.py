@@ -175,22 +175,22 @@ def main():
                 if user_input and resno:
                         response = data_retrieval(user_input,resno)
                         st.text("")
-                        st.text("You: " + user_input)
-                        st.text("AI: " + str(response))
+                        st.markdown("You: " + user_input)
+                        st.markdown("AI: " + str(response))
         elif selected_option == "Data Inference":
             if submit_button:
                 if user_input:
                     response = data_inference(user_input)
                     st.text("")
-                    st.text("You: " + user_input)
-                    st.text("AI: " + response)
+                    st.markdown("You: " + user_input)
+                    st.markdown("AI: " + response)
         elif selected_option == "Follow Up":
                 if submit_button:
                     if user_input:
                         response = follow_up(user_input)
                         st.text("")
-                        st.text("You: " + user_input)
-                        st.text("AI: "+ response)
+                        st.markdown("You: " + user_input)
+                        st.markdown("AI: "+ response)
 
             
 
