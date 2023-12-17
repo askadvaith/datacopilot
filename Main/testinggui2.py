@@ -163,10 +163,8 @@ def main():
             user_input = st.text_area("Enter a query:", height=100)
             resno = st.text_input("Enter the number of records to retrieve if applicable:")
         with col2:
-            options = ["Data Retrieval", "Data Inference", "Follow Up"]
-            selected_option = st.selectbox("Select an Option", options)
-            st.write("")  # Adjusts spacing
-            submit_button = st.form_submit_button(label='Send')
+            selected_option = st.radio("Select an Option", ["Data Retrieval", "Data Inference", "Follow Up"])
+            submit_button = st.button('Send')
         
 
           # If the input field is not empty
